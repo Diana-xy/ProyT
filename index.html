@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página con Menú Lateral</title>
+    <title>Encriptador</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <aside class="menu-lateral">
-            <h2>Menú</h2>
-            <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#encriptado">Encriptados</a></li>
-            </ul>
-        </aside>
-        <main class="contenido">
-            <section id="inicio">
-                <h1>Bienvenido</h1>
-                <p>¡Hola! Bienvenido a</p>
-            </section>
-        </main>
+        <!-- Encabezado con logo -->
+        <div class="header">
+            <img src="logo.png" alt="Logo" height="50">
+        </div>
+        <div class="main">
+            <div class="sidebar">
+                <button>binaro</button>
+                <button>letras</button>
+                <button>simbolos</button>
+            </div>
+            <div class="content">
+                <div class="question-text">¿Qué deseas encriptar?</div>
+                <textarea class="text-box"></textarea>
+                <div class="buttons">
+                    <button class="btn-tipo">a binario</button>
+                    <button class="btn-encrypt">Encriptar</button>
+                </div>
+                <div class="output"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
