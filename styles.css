@@ -11,7 +11,7 @@ body {
 
 .container {
     max-width:100%;
-    margin-left: 150px; /* Mismo ancho que la barra lateral */
+    margin-left: 150px;
     padding: 30px;
     padding-top: 80px;
     width: calc(100% - 150px);
@@ -95,19 +95,35 @@ button:hover {
 }
 
 .question-text {
-    padding: 10px; /* Ajusta el valor de padding según tus necesidades */
-    font-weight: bold; /* Opcional: para destacar el texto */
+    padding: 10px;
+    font-weight: bold; 
+}
+.dropdown {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
-.btn-tipo {
-    padding: 15px 30px; 
-    font-size: 14px; 
-    width: 120px;
+.btn-execute {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
-/* Estilos específicos para el botón "Encriptar" */
+.btn-execute:hover {
+    background-color: #0056b3;
+}
+
 .btn-encrypt {
     padding: 15px 30px; 
     font-size: 14px; 
     width: 120px; 
 }
+

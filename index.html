@@ -8,7 +8,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Encabezado con logo -->
         <div class="header">
             <img src="logo.png" alt="Logo" height="50">
         </div>
@@ -20,14 +19,138 @@
             </div>
             <div class="content">
                 <div class="question-text">¿Qué deseas encriptar?</div>
-                <textarea class="text-box"></textarea>
+                <textarea id="text-input" class="text-box"></textarea>
                 <div class="buttons">
-                    <button class="btn-tipo">a binario</button>
-                    <button class="btn-encrypt">Encriptar</button>
+                    <div class="action-container">
+                        <!-- Dropdown para seleccionar tipo de encriptado -->
+                        <select id="encryption-type" class="dropdown">
+                            <option value="binary">Binario</option>
+                            <option value="reverse">Invertido</option>
+                            <option value="caesar">Cifrado César</option>
+                        </select>
+                    
+                        <!-- Dropdown para seleccionar acción (encriptar/desencriptar) -->
+                        <select id="action-type" class="dropdown">
+                            <option value="encrypt">Encriptar</option>
+                            <option value="decrypt">Desencriptar</option>
+                        </select>
+                    
+                        <!-- Botón para ejecutar la acción -->
+                        <button id="execute-btn" class="btn-execute">Ejecutar</button>
+                    </div>
                 </div>
-                <div class="output"></div>
+                
+                
+                <div id="output" class="output"></div>
             </div>
         </div>
     </div>
+    
+    <script>
+        const textarea = document.getElementById('text-input');
+        const output = document.getElementById('output');
+        const encryptionType = document.getElementById('encryption-type');
+        const actionType = document.getElementById('action-type');
+        const executeButton = document.getElementById('execute-btn');
+    
+        function encryptToBinary(text) {
+            return text
+                .split('')
+                .map(char => char.charCodeAt(0).toString(2))
+                .join(' ');
+        }
+    
+        function decryptFromBinary(binaryText) {
+            return binaryText
+                .split(' ')
+                .map(bin => String.fromCharCode(parseInt(bin, 2)))
+                .join('');
+        }
+    
+        function encryptToReverse(text) {
+            return text.split('').reverse().join('');
+        }
+    
+        function decryptFromReverse(reversedText) {
+            return reversedText.split('').reverse().join('');
+        }
+    
+        function encryptCaesar(text, shift = 3) {
+            return text
+                .split('')
+                .map(char => {
+                    if (/[a-z]/.test(char)) {
+                        return String.fromCharCode(((char.charCodeAt(0) - 97 + shift) % 26) + 97);
+                    } else if (/[A-Z]/.test(char)) {
+                        return String.fromCharCode(((char.charCodeAt(0) - 65 + shift) % 26) + 65);
+                    } else {
+                        return char; 
+                    }
+                })
+                .join('');
+        }
+    
+        function decryptCaesar(text, shift = 3) {
+            return text
+                .split('')
+                .map(char => {
+                    if (/[a-z]/.test(char)) {
+                        return String.fromCharCode(((char.charCodeAt(0) - 97 - shift + 26) % 26) + 97);
+                    } else if (/[A-Z]/.test(char)) {
+                        return String.fromCharCode(((char.charCodeAt(0) - 65 - shift + 26) % 26) + 65);
+                    } else {
+                        return char;
+                    }
+                })
+                .join('');
+        }
+    
+        executeButton.addEventListener('click', () => {
+            const text = textarea.value.trim(); 
+            const selectedEncryption = encryptionType.value; 
+            const selectedAction = actionType.value; 
+    
+            if (text === '') {
+                output.textContent = 'Por favor, ingresa texto para procesar.';
+                return;
+            }
+    
+            let result = '';
+    
+            if (selectedAction === 'encrypt') {
+                switch (selectedEncryption) {
+                    case 'binary':
+                        result = encryptToBinary(text);
+                        break;
+                    case 'reverse':
+                        result = encryptToReverse(text);
+                        break;
+                    case 'caesar':
+                        result = encryptCaesar(text);
+                        break;
+                    default:
+                        result = 'Método de encriptación no reconocido.';
+                }
+            } else if (selectedAction === 'decrypt') {
+                switch (selectedEncryption) {
+                    case 'binary':
+                        result = decryptFromBinary(text);
+                        break;
+                    case 'reverse':
+                        result = decryptFromReverse(text);
+                        break;
+                    case 'caesar':
+                        result = decryptCaesar(text);
+                        break;
+                    default:
+                        result = 'Método de desencriptación no reconocido.';
+                }
+            }
+    
+            output.textContent = result;
+        });
+    </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
