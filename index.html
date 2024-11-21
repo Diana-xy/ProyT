@@ -22,20 +22,28 @@
                 <textarea id="text-input" class="text-box"></textarea>
                 <div class="buttons">
                     <div class="action-container">
-                        <!-- Dropdown para seleccionar tipo de encriptado -->
                         <select id="encryption-type" class="dropdown">
                             <option value="binary">Binario</option>
                             <option value="reverse">Invertido</option>
                             <option value="caesar">Cifrado César</option>
+                            <option value="xor">XOR</option>
+                            <option value="Base64">Base64</option>
+                            <option value="vigenere">Vigenère</option>
+                            <option value="sha256">SHA-256</option>
+                            <option value="aes">AES</option>
+                            <option value="morse">Morse</option>
                         </select>
-                    
-                        <!-- Dropdown para seleccionar acción (encriptar/desencriptar) -->
                         <select id="action-type" class="dropdown">
                             <option value="encrypt">Encriptar</option>
                             <option value="decrypt">Desencriptar</option>
                         </select>
-                    
-                        <!-- Botón para ejecutar la acción -->
+
+                        <label for="shift">Desplazamiento:</label>
+                        <input type="number" id="shift" value="3" min="1" max="25" />
+
+                        <label for="key">Clave:</label>
+                        <input type="text" id="key" placeholder="Introduce tu clave" />
+
                         <button id="execute-btn" class="btn-execute">Ejecutar</button>
                     </div>
                 </div>
@@ -75,78 +83,287 @@
             return reversedText.split('').reverse().join('');
         }
     
-        function encryptCaesar(text, shift = 3) {
-            return text
+        function caesarCipher(text, shift, action) {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz"; 
+            const alphabetUpper = alphabet.toUpperCase();
+            let result = "";
+
+            if (action === "decrypt") shift = -shift;
+
+            for (let char of text) {
+                if (alphabet.includes(char)) {
+                    const index = (alphabet.indexOf(char) + shift + 26) % 26;
+                    result += alphabet[index];
+                } else if (alphabetUpper.includes(char)) {
+                    const index = (alphabetUpper.indexOf(char) + shift + 26) % 26;
+                    result += alphabetUpper[index];
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+        document.getElementById("execute-btn").addEventListener("click", () => {
+            const text = document.getElementById("text-input").value;
+            const shift = parseInt(document.getElementById("shift").value); 
+            const action = document.getElementById("action-type").value;
+            const result = caesarCipher(text, shift, action);
+            document.getElementById("output").innerText = result;
+        });
+
+
+        function xorCipher(text, key) {
+            if (!key) {
+                alert("Por favor, introduce una clave.");
+                return "";
+            }
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                const textChar = text.charCodeAt(i);
+                const keyChar = key.charCodeAt(i % key.length); 
+                const xorResult = textChar ^ keyChar; 
+                result += String.fromCharCode(xorResult);
+            }
+            return result;
+        }
+        document.getElementById("execute-btn").addEventListener("click", () => {
+            const text = document.getElementById("text-input").value;
+            const key = document.getElementById("key").value;
+            const action = document.getElementById("action-type").value;
+            const result = xorCipher(text, key);
+            document.getElementById("output").innerText = result;
+        });
+
+
+        function xoreCipher(text, key) {
+            if (!key) {
+                console.error("Por favor, introduce una clave.");
+                return "";
+            }
+
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                const textChar = text.charCodeAt(i);
+                const keyChar = key.charCodeAt(i % key.length);
+                const xoreResult = textChar ^ keyChar; 
+                result += String.fromCharCode(xoreResult);
+            }
+            return result;
+        }
+
+        function xoreCipherBase64(text, key) {
+            const xoreResult = xoreCipher(text, key);
+            return btoa(xoreResult); 
+        }
+        function xoreDecipherBase64(base64Text, key) {
+            const decodedText = atob(base64Text);
+            return xoreCipher(decodedText, key);
+        }
+        const text = "Hola Mundo"; 
+        const key = "clave";
+        const encryptedBase64 = xoreCipherBase64(text, key);
+        console.log("Texto Encriptado en Base64:", encryptedBase64);
+        const decryptedText = xoreDecipherBase64(encryptedBase64, key);
+        console.log("Texto Desencriptado:", decryptedText);
+
+
+
+
+        function vigenereEncrypt(text, key) {
+            let result = '';
+            text = text.toUpperCase(); 
+            key = key.toUpperCase();  
+
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                const textChar = text.charCodeAt(i);
+                if (textChar >= 65 && textChar <= 90) { 
+                    const keyChar = key.charCodeAt(keyIndex % key.length);
+                    const encryptedChar = (textChar - 65 + keyChar - 65) % 26 + 65;
+                    result += String.fromCharCode(encryptedChar);
+
+                    keyIndex++; 
+                } else {
+                    result += text.charAt(i); 
+                }
+            }
+            return result;
+        }
+        function vigenereDecrypt(text, key) {
+            let result = '';
+            text = text.toUpperCase();
+            key = key.toUpperCase();
+            let keyIndex = 0;
+            for (let i = 0; i < text.length; i++) {
+                const textChar = text.charCodeAt(i);
+                if (textChar >= 65 && textChar <= 90) {
+                    const keyChar = key.charCodeAt(keyIndex % key.length);
+                    const decryptedChar = (textChar - keyChar + 26) % 26 + 65;
+                    result += String.fromCharCode(decryptedChar);
+                    keyIndex++;
+                } else {
+                    result += text.charAt(i);
+                }
+            }
+            return result;
+        }
+        
+
+        async function sha256Encrypt(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function generateAESKey() {
+            const key = await crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256,
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+            return key;
+        }
+
+        async function aesEncrypt(text, key) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+
+            const iv = crypto.getRandomValues(new Uint8Array(12)); // Genera un IV único (12 bytes recomendado)
+            const encrypted = await crypto.subtle.encrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv,
+                },
+                key,
+                data
+            );
+
+            // Devuelve el cifrado como un objeto con el IV y los datos cifrados
+            return {
+                iv: Array.from(iv), // Convertir IV a una matriz para facilitar su almacenamiento/uso
+                encrypted: Array.from(new Uint8Array(encrypted)), // Datos cifrados
+            };
+        }
+        async function aesDecrypt(encrypted, iv, key) {
+            const deciphered = await crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: new Uint8Array(iv), // Reconstruir el IV
+                },
+                key,
+                new Uint8Array(encrypted) // Reconstruir los datos cifrados
+            );
+
+            const decoder = new TextDecoder();
+            return decoder.decode(deciphered);
+        }
+
+
+        function encryptToMorse(text) {
+            return text.toUpperCase()
                 .split('')
-                .map(char => {
-                    if (/[a-z]/.test(char)) {
-                        return String.fromCharCode(((char.charCodeAt(0) - 97 + shift) % 26) + 97);
-                    } else if (/[A-Z]/.test(char)) {
-                        return String.fromCharCode(((char.charCodeAt(0) - 65 + shift) % 26) + 65);
-                    } else {
-                        return char; 
-                    }
-                })
+                .map(char => morseCode[char] || '?') // Usa '?' para caracteres desconocidos
+                .join(' ');
+        }
+        function decryptFromMorse(morseText) {
+            return morseText
+                .split(' ') // Divide por espacios
+                .map(code => reverseMorseCode[code] || '?') // Usa '?' para códigos desconocidos
                 .join('');
         }
-    
-        function decryptCaesar(text, shift = 3) {
-            return text
-                .split('')
-                .map(char => {
-                    if (/[a-z]/.test(char)) {
-                        return String.fromCharCode(((char.charCodeAt(0) - 97 - shift + 26) % 26) + 97);
-                    } else if (/[A-Z]/.test(char)) {
-                        return String.fromCharCode(((char.charCodeAt(0) - 65 - shift + 26) % 26) + 65);
-                    } else {
-                        return char;
-                    }
-                })
-                .join('');
-        }
-    
-        executeButton.addEventListener('click', () => {
-            const text = textarea.value.trim(); 
-            const selectedEncryption = encryptionType.value; 
-            const selectedAction = actionType.value; 
+
+
+
+        executeButton.addEventListener('click', async () => {
+            const text = textarea.value.trim();
+            const selectedEncryption = encryptionType.value;
+            const selectedAction = actionType.value;
+            const shift = parseInt(document.getElementById('shift').value);
+            const key = document.getElementById('key').value;
     
             if (text === '') {
-                output.textContent = 'Por favor, ingresa texto para procesar.';
+                output.textContent = 'Por favor, ingresa un texto';
                 return;
             }
-    
             let result = '';
-    
-            if (selectedAction === 'encrypt') {
-                switch (selectedEncryption) {
-                    case 'binary':
-                        result = encryptToBinary(text);
-                        break;
-                    case 'reverse':
-                        result = encryptToReverse(text);
-                        break;
-                    case 'caesar':
-                        result = encryptCaesar(text);
-                        break;
-                    default:
-                        result = 'Método de encriptación no reconocido.';
-                }
-            } else if (selectedAction === 'decrypt') {
-                switch (selectedEncryption) {
-                    case 'binary':
-                        result = decryptFromBinary(text);
-                        break;
-                    case 'reverse':
-                        result = decryptFromReverse(text);
-                        break;
-                    case 'caesar':
-                        result = decryptCaesar(text);
-                        break;
-                    default:
-                        result = 'Método de desencriptación no reconocido.';
-                }
+            switch (selectedEncryption) {
+                case 'binary':
+                    result = selectedAction === 'encrypt'
+                        ? encryptToBinary(text)
+                        : decryptFromBinary(text);
+                    break;
+                case 'reverse':
+                    result = selectedAction === 'encrypt'
+                        ? encryptToReverse(text)
+                        : decryptFromReverse(text);
+                    break;
+                case 'caesar':
+                    result = caesarCipher(text, shift, selectedAction);
+                    break;
+                case 'xor':
+                    if (!key) {
+                        result = 'Por favor, introduce una clave.';
+                    } else {
+                        result = xorCipher(text, key);
+                    }
+                    break;
+                case 'base64':
+                    result = selectedAction === 'encrypt'
+                        ? btoa(text)
+                        : atob(text);
+                    break;
+                case 'vigenere':
+                    if (!key) {
+                        result = 'Por favor, introduce una clave.';
+                    } else {
+                        result = selectedAction === 'encrypt'
+                            ? vigenereEncrypt(text, key)
+                            : vigenereDecrypt(text, key);
+                    }
+                    break;
+                case 'sha256':
+                    if (selectedAction === 'encrypt') {
+                        result = await sha256Encrypt(text);
+                    } else {
+                        result = 'SHA-256 no admite desencriptación.';
+                    }
+                    break;
+                case 'aes':
+                    if (!key) {
+                        result = 'Por favor, introduce una clave.';
+                    } else {
+                        const aesKey = await generateAESKey();
+                            if (selectedAction === 'encrypt') {
+                                const encryptedData = await aesEncrypt(text, aesKey);
+                                result = JSON.stringify(encryptedData);
+                            } else if (selectedAction === 'decrypt') {
+                                try {
+                                    const parsedData = JSON.parse(text);
+                                    result = await aesDecrypt(parsedData.encrypted, parsedData.iv, aesKey);
+                                } catch (e) {
+                                    result = 'Error al desencriptar. Asegúrate de que el formato del texto cifrado sea correcto.';
+                                }
+                            }
+                        }
+                    break;
+                case 'morse':
+                    if (selectedAction === 'encrypt') {
+                        result = encryptToMorse(text);
+                    } else if (selectedAction === 'decrypt') {
+                        result = decryptFromMorse(text);
+                    } else {
+                        result = 'Acción no reconocida para Morse.';
+                    }
+                    break;
+                default:
+                    result = 'Método de encriptación no reconocido.';
             }
-    
             output.textContent = result;
         });
     </script>
