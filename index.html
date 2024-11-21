@@ -234,7 +234,7 @@
             const encoder = new TextEncoder();
             const data = encoder.encode(text);
 
-            const iv = crypto.getRandomValues(new Uint8Array(12)); // Genera un IV único (12 bytes recomendado)
+            const iv = crypto.getRandomValues(new Uint8Array(12));
             const encrypted = await crypto.subtle.encrypt(
                 {
                     name: "AES-GCM",
@@ -244,20 +244,19 @@
                 data
             );
 
-            // Devuelve el cifrado como un objeto con el IV y los datos cifrados
             return {
-                iv: Array.from(iv), // Convertir IV a una matriz para facilitar su almacenamiento/uso
-                encrypted: Array.from(new Uint8Array(encrypted)), // Datos cifrados
+                iv: Array.from(iv), 
+                encrypted: Array.from(new Uint8Array(encrypted)),
             };
         }
         async function aesDecrypt(encrypted, iv, key) {
             const deciphered = await crypto.subtle.decrypt(
                 {
                     name: "AES-GCM",
-                    iv: new Uint8Array(iv), // Reconstruir el IV
+                    iv: new Uint8Array(iv),
                 },
                 key,
-                new Uint8Array(encrypted) // Reconstruir los datos cifrados
+                new Uint8Array(encrypted)
             );
 
             const decoder = new TextDecoder();
@@ -268,13 +267,13 @@
         function encryptToMorse(text) {
             return text.toUpperCase()
                 .split('')
-                .map(char => morseCode[char] || '?') // Usa '?' para caracteres desconocidos
+                .map(char => morseCode[char] || '?') 
                 .join(' ');
         }
         function decryptFromMorse(morseText) {
             return morseText
-                .split(' ') // Divide por espacios
-                .map(code => reverseMorseCode[code] || '?') // Usa '?' para códigos desconocidos
+                .split(' ') 
+                .map(code => reverseMorseCode[code] || '?')
                 .join('');
         }
 
