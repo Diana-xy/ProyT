@@ -9,14 +9,22 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="logo.png" alt="Logo" height="50">
+            <img src="img/titt_1.png" alt="Logo" height="80">
         </div>
         <div class="main">
             <div class="sidebar">
-                <button>binaro</button>
-                <button>letras</button>
-                <button>simbolos</button>
+                <button class="btn" onclick="mostrarDescripcion('binario')">Binario</button>
+                <button class="btn" onclick="mostrarDescripcion('invertido')">Invertido</button>
+                <button class="btn" onclick="mostrarDescripcion('cesar')">Cifrado César</button>
+                <!-- <button class="btn" onclick="mostrarDescripcion('xor')">Cifrado XOR</button> -->
+                <button class="btn" onclick="mostrarDescripcion('base64')">Cifrado Base64</button>
+                <button class="btn" onclick="mostrarDescripcion('vigenere')">Vigenère</button>
+                <button class="btn" onclick="mostrarDescripcion('sha-256')">SHA-256</button>
+                <button class="btn" onclick="mostrarDescripcion('aes')">AES(Advanced Encryption Standard)</button>
+                <button class="btn" onclick="mostrarDescripcion('morse')">Morse</button>
+                <div id="descripcion" class="descripcion"></div>
             </div>
+            
             <div class="content">
                 <div class="question-text">¿Qué deseas encriptar?</div>
                 <textarea id="text-input" class="text-box"></textarea>
@@ -26,7 +34,7 @@
                             <option value="binary">Binario</option>
                             <option value="reverse">Invertido</option>
                             <option value="caesar">Cifrado César</option>
-                            <option value="xor">XOR</option>
+                            <!-- <option value="xor">XOR</option> -->
                             <option value="Base64">Base64</option>
                             <option value="vigenere">Vigenère</option>
                             <option value="sha256">SHA-256</option>
@@ -40,14 +48,11 @@
 
                         <label for="shift">Desplazamiento:</label>
                         <input type="number" id="shift" value="3" min="1" max="25" />
-
                         <label for="key">Clave:</label>
                         <input type="text" id="key" placeholder="Introduce tu clave" />
-
                         <button id="execute-btn" class="btn-execute">Ejecutar</button>
                     </div>
                 </div>
-                
                 
                 <div id="output" class="output"></div>
             </div>
