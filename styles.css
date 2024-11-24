@@ -6,7 +6,7 @@
 body {
     display: flex;
     margin: 0;
-    background-color: #cdd8e4;
+    background-color: #e0ebf7;
 }
 
 .container {
@@ -26,8 +26,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e0e0e0;
-    border-bottom: 2px solid black;
+    background-color: #c2d4de;
+    border-bottom: 2px solid rgb(39, 53, 71);
     z-index: 1; 
     padding-top: 20px;
 }
@@ -60,7 +60,7 @@ body {
 }
 
 .output {
-    border: 1.5px solid black;
+    border: 1.5px solid rgb(55, 76, 104);
     padding: 10px;
     min-height: 100px;
 }
@@ -83,13 +83,13 @@ button:hover {
     font-weight: bold;
     margin-bottom: 10px;
     border: 1px solid #e0e0e0;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgb(55, 76, 104);
 }
 .descripcion {
     margin-top: 20px;
     padding: 15px;
-    border: 1px solid #7dbeda;
-    background-color: #d1dce8;
+    border: 1px solid #bfcbd6;
+    background-color: #e0ebf7;
     border-radius: 5px;
     font-size: 14px;
     display: none;
@@ -98,14 +98,15 @@ button:hover {
 .text-box {
     width: 100%;
     padding: 10px;
-    border: 1.5px solid black;
+    border: 1.5px solid rgb(55, 76, 104);
     margin-bottom: 10px;
-    min-height: 50px;
+    min-height: 100px;
 }
 
 .question-text {
     padding: 10px;
     font-weight: bold; 
+    color: rgb(20, 26, 33);
 }
 
 .action-container {
@@ -153,6 +154,5 @@ button:hover {
 .btn-encrypt {
     padding: 15px 30px; 
     font-size: 14px; 
-    width: 120px; 
+    width: 120px;
 }
-
